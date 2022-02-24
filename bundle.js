@@ -291,9 +291,12 @@ var Model = /*#__PURE__*/function () {
 
   _createClass(Model, [{
     key: "init",
-    value: function init(initState, callback) {
+    value: function init(callback) {
+      var initState = {
+        lottoList: []
+      };
       this.update(initState);
-      callback();
+      callback(this.getState());
     }
   }, {
     key: "update",
