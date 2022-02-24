@@ -414,12 +414,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ Lotto)
 /* harmony export */ });
-/* harmony import */ var _LottoNumbers_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./LottoNumbers.js */ "./src/js/models/Lotto/LottoNumbers.js");
+/* harmony import */ var _utils_lottoUtils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../utils/lottoUtils.js */ "./src/js/utils/lottoUtils.js");
+/* harmony import */ var _utils_utils_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../utils/utils.js */ "./src/js/utils/utils.js");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+
 
 
 
@@ -427,48 +429,19 @@ var Lotto = /*#__PURE__*/function () {
   function Lotto() {
     _classCallCheck(this, Lotto);
 
-    this.numbers = new _LottoNumbers_js__WEBPACK_IMPORTED_MODULE_0__["default"]();
+    this.numbers = (0,_utils_lottoUtils_js__WEBPACK_IMPORTED_MODULE_0__.getLottoNumberList)();
+    Object.freeze(this);
   }
 
   _createClass(Lotto, [{
     key: "getNumbers",
     value: function getNumbers() {
-      return this.numbers.list;
+      return (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.cloneObject)(this.numbers.list);
     }
   }]);
 
   return Lotto;
 }();
-
-
-
-/***/ }),
-
-/***/ "./src/js/models/Lotto/LottoNumbers.js":
-/*!*********************************************!*\
-  !*** ./src/js/models/Lotto/LottoNumbers.js ***!
-  \*********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ LottoNumbers)
-/* harmony export */ });
-/* harmony import */ var _utils_lottoUtils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../utils/lottoUtils.js */ "./src/js/utils/lottoUtils.js");
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-
-
-var LottoNumbers = /*#__PURE__*/_createClass(function LottoNumbers() {
-  _classCallCheck(this, LottoNumbers);
-
-  this.list = (0,_utils_lottoUtils_js__WEBPACK_IMPORTED_MODULE_0__.getLottoNumberList)();
-  Object.freeze(this);
-});
 
 
 
@@ -527,7 +500,7 @@ var LottoAppModel = /*#__PURE__*/function (_Model) {
   _createClass(LottoAppModel, [{
     key: "purchase",
     value: function purchase(amount, callback) {
-      this.issueLottoWithCount(this.getNumberOfLotto(amount));
+      this.issueLottoWithCount(LottoAppModel.getNumberOfLotto(amount));
       callback(this.getState());
     }
   }, {
@@ -600,7 +573,7 @@ var template = {
     var lottoList = _ref2.lottoList,
         isShowNumber = _ref2.isShowNumber;
     return "\n      <label>\uCD1D <span>".concat(lottoList.length, "</span>\uAC1C\uB97C \uAD6C\uB9E4\uD558\uC600\uC2B5\uB2C8\uB2E4.</label>\n      <ul id=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_0__.DOM_STRING.TICKET_LIST, "\" class=\"").concat(isShowNumber && _configs_contants_js__WEBPACK_IMPORTED_MODULE_0__.DOM_STRING.TICKET_LIST_COLUMN || _configs_contants_js__WEBPACK_IMPORTED_MODULE_0__.DOM_STRING.TICKET_LIST_ROW, "\">\n        ").concat(lottoList.map(function (lotto) {
-      return "<li class=\"".concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_0__.DOM_STRING.TICKET, "\">\n              <p>\uD83C\uDF9F\n              ").concat(isShowNumber && "<span class=\"".concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_0__.DOM_STRING.TICKET_NUMBERS, "\">").concat(lotto.getNumbers().join(', '), "</span>") || '', "\n              \n              </p>\n              </li>");
+      return "<li class=\"".concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_0__.DOM_STRING.TICKET, "\">\n              <p>\uD83C\uDF9F\n              ").concat(isShowNumber && "<span class=\"".concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_0__.DOM_STRING.TICKET_NUMBERS, "\">").concat(lotto.numbers.join(', '), "</span>") || '', "\n              \n              </p>\n              </li>");
     }).join(''), "\n      </ul>\n    ");
   },
   winningNumberSection: function winningNumberSection() {
@@ -710,7 +683,7 @@ var isValidlottoNumbers = function isValidlottoNumbers(lottoNumbers) {
   });
 };
 var isValidLotto = function isValidLotto(lotto) {
-  return isValidlottoNumbers(lotto.getNumbers());
+  return isValidlottoNumbers(lotto.numbers);
 };
 var isValidLottoList = function isValidLottoList(lottoList, count) {
   return lottoList.length === count && lottoList.every(function (lotto) {
