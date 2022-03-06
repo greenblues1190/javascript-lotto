@@ -323,10 +323,7 @@ var AppController = /*#__PURE__*/function (_Controller) {
   }, {
     key: "countMatchedTickets",
     value: function countMatchedTickets(lottoList, winningNumbers) {
-      var rankCount = {};
-      Object.keys(_configs_contants_js__WEBPACK_IMPORTED_MODULE_2__.LOTTO.PRIZE).forEach(function (rank) {
-        if (rank) rankCount[rank] = 0;
-      });
+      var rankCount = (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_3__.getEmptyCount)(Object.keys(_configs_contants_js__WEBPACK_IMPORTED_MODULE_2__.LOTTO.PRIZE));
       lottoList.forEach(function (ticket) {
         var rank = ticket.matchWinningNumbers(winningNumbers);
         if (rank) rankCount[rank] += 1;
@@ -341,8 +338,8 @@ var AppController = /*#__PURE__*/function (_Controller) {
             rank = _ref2[0],
             count = _ref2[1];
 
-        var amount = _configs_contants_js__WEBPACK_IMPORTED_MODULE_2__.LOTTO.PRIZE[rank].AMOUNT;
-        return sum + amount * count;
+        var prize = _configs_contants_js__WEBPACK_IMPORTED_MODULE_2__.LOTTO.PRIZE[rank].AMOUNT;
+        return sum + prize * count;
       }, 0);
     }
   }, {
@@ -744,6 +741,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "generateNumberArray": () => (/* binding */ generateNumberArray),
 /* harmony export */   "cloneObject": () => (/* binding */ cloneObject),
+/* harmony export */   "getEmptyCount": () => (/* binding */ getEmptyCount),
 /* harmony export */   "concatWinningNumbers": () => (/* binding */ concatWinningNumbers),
 /* harmony export */   "removeNaN": () => (/* binding */ removeNaN),
 /* harmony export */   "ignoreFirstZero": () => (/* binding */ ignoreFirstZero),
@@ -792,6 +790,13 @@ var cloneObject = function cloneObject(obj) {
     clone[key] = _typeof(obj[key]) === 'object' && obj[key] !== null ? cloneObject(obj[key]) : clone[key] = obj[key];
   });
   return clone;
+};
+var getEmptyCount = function getEmptyCount(keys) {
+  var count = {};
+  keys.forEach(function (key) {
+    if (key) count[key] = 0;
+  });
+  return count;
 };
 var concatWinningNumbers = function concatWinningNumbers(winningNumbers) {
   return [].concat(_toConsumableArray(winningNumbers.main), [winningNumbers.bonus]);
@@ -1131,7 +1136,7 @@ var ResultModalWindowView = /*#__PURE__*/function (_View) {
             rank = _ref2[0],
             count = _ref2[1];
 
-        return "\n                    <tr>\n                      <td>".concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.LOTTO.PRIZE[rank].TITLE, "</td>\n                      <td>").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.LOTTO.PRIZE[rank].AMOUNT, "</td>\n                      <td>").concat(count, "\uAC1C</td>\n                    <tr>\n                  ");
+        return "\n                    <tr>\n                      <td>".concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.LOTTO.PRIZE[rank].TITLE, "</td>\n                      <td>").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.LOTTO.PRIZE[rank].AMOUNT.toLocaleString('ko-KR'), "</td>\n                      <td>").concat(count, "\uAC1C</td>\n                    <tr>\n                  ");
       }).join(''), "\n              </tbody>\n            </table>\n            <p>\uB2F9\uC2E0\uC758 \uCD1D \uC218\uC775\uB960\uC740 ").concat(rateOfReturn * 100, "%\uC785\uB2C8\uB2E4.</p>\n          </div>\n          <button\n            id=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.RESTART_BUTTON, "\"\n            class=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.SUBMIT_BUTTON, "\"\n          >\n            \uB2E4\uC2DC \uC2DC\uC791\uD558\uAE30\n          </button>\n        </div>\n      </div>\n    ");
     }
   }, {
