@@ -611,12 +611,12 @@ var Lotto = /*#__PURE__*/function () {
     value: function countMatchedNumbers(winningNumbers) {
       var _this = this;
 
-      var matched = 0;
-      var isBonusNumberMatched = false;
-      winningNumbers.main.forEach(function (num) {
-        if (_this.numbers.includes(num)) matched += 1;
-      });
-      if (this.numbers.includes(winningNumbers.bonus)) isBonusNumberMatched = true;
+      var main = winningNumbers.main,
+          bonus = winningNumbers.bonus;
+      var matched = main.filter(function (num) {
+        return _this.numbers.includes(num);
+      }).length;
+      var isBonusNumberMatched = this.numbers.includes(bonus);
       return {
         matched: matched,
         isBonusNumberMatched: isBonusNumberMatched
@@ -631,7 +631,7 @@ var Lotto = /*#__PURE__*/function () {
             _ = _ref2[0],
             CONDITION = _ref2[1].CONDITION;
 
-        return JSON.stringify(CONDITION) === JSON.stringify(matchedCount);
+        return (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_0__.isEqual)(CONDITION, matchedCount);
       })[0];
       return result && result[0] || null;
     }
@@ -741,6 +741,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "generateNumberArray": () => (/* binding */ generateNumberArray),
 /* harmony export */   "cloneObject": () => (/* binding */ cloneObject),
+/* harmony export */   "isEqual": () => (/* binding */ isEqual),
 /* harmony export */   "getEmptyCount": () => (/* binding */ getEmptyCount),
 /* harmony export */   "concatWinningNumbers": () => (/* binding */ concatWinningNumbers),
 /* harmony export */   "removeNaN": () => (/* binding */ removeNaN),
@@ -791,6 +792,22 @@ var cloneObject = function cloneObject(obj) {
   });
   return clone;
 };
+
+var isObject = function isObject(object) {
+  return object != null && _typeof(object) === 'object';
+};
+
+function isEqual(object1, object2) {
+  var keys1 = Object.keys(object1);
+  var keys2 = Object.keys(object2);
+  if (keys1.length !== keys2.length) return false;
+  return !keys1.some(function (key) {
+    var val1 = object1[key];
+    var val2 = object2[key];
+    var areObjects = isObject(val1) && isObject(val2);
+    return areObjects && !isEqual(val1, val2) || !areObjects && val1 !== val2;
+  });
+}
 var getEmptyCount = function getEmptyCount(keys) {
   var count = {};
   keys.forEach(function (key) {
