@@ -89,6 +89,7 @@ var DOM_STRING = {
   HINT: 'hint',
   STYLED_INPUT: 'styled-input',
   SUBMIT_BUTTON: 'submit-button',
+  PAYMENT_FORM: 'payment-form',
   PAYMENT_INPUT: 'payment-input',
   PAYMENT_SUBMIT: 'payment-submit',
   SWITCH: 'switch',
@@ -278,10 +279,10 @@ var AppController = /*#__PURE__*/function (_Controller) {
   }, {
     key: "bindEventHandlers",
     value: function bindEventHandlers() {
-      this.views.paymentSectionView.bindOnClickPaymentSubmit(this.purchase.bind(this));
+      this.views.paymentSectionView.bindOnSubmitPaymentSubmit(this.purchase.bind(this));
       this.views.ticketSectionView.bindOnClickNumberToggle();
       this.views.winningNumberSectionView.bindOnInputWinningNumberInput();
-      this.views.winningNumberSectionView.bindOnClickShowResultButton(this.updateResult.bind(this));
+      this.views.winningNumberSectionView.bindOnSubmitWinningNumberForm(this.updateResult.bind(this));
       this.views.resultModalWindowView.bindOnClickModalOverlay(this.initModels.bind(this));
     }
   }, {
@@ -755,7 +756,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "$all": () => (/* binding */ $all),
 /* harmony export */   "isInputOutOfRange": () => (/* binding */ isInputOutOfRange),
 /* harmony export */   "getNextSibling": () => (/* binding */ getNextSibling),
-/* harmony export */   "getPrevSibling": () => (/* binding */ getPrevSibling)
+/* harmony export */   "getPrevSibling": () => (/* binding */ getPrevSibling),
+/* harmony export */   "focusNextSibling": () => (/* binding */ focusNextSibling),
+/* harmony export */   "forceIntegerValue": () => (/* binding */ forceIntegerValue)
 /* harmony export */ });
 /* harmony import */ var _configs_contants__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../configs/contants */ "./src/js/configs/contants.js");
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
@@ -887,6 +890,18 @@ var getPrevSibling = function getPrevSibling(target, _ref2) {
       attributeType = _ref2.attributeType;
   var siblings = $all(attributeName, attributeType);
   return siblings[_toConsumableArray(siblings).indexOf(target) - 1];
+};
+var focusNextSibling = function focusNextSibling(target, attribute, limit) {
+  if (isInputOutOfRange(target, limit)) {
+    var nextInput = getNextSibling(target, attribute);
+    if (nextInput) nextInput.focus();
+  }
+};
+var forceIntegerValue = function forceIntegerValue(target, limit) {
+  var maxLength = parseInt(limit, 10).toString().length;
+  target.value = removeNaN(target.value);
+  target.value = ignoreFirstZero(target.value);
+  target.value = target.value.substr(0, maxLength);
 };
 
 /***/ }),
@@ -1039,27 +1054,31 @@ var PaymentSectionView = /*#__PURE__*/function (_View) {
   _createClass(PaymentSectionView, [{
     key: "template",
     value: function template() {
-      return "\n      <label class=\"".concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.HINT, "\">\uAD6C\uC785\uD560 \uAE08\uC561\uC744 \uC785\uB825\uD574\uC8FC\uC138\uC694.</label>\n      <form class=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.INPUT_FORM, "\">\n        <input\n          id=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.PAYMENT_INPUT, "\"\n          class=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.STYLED_INPUT, "\"\n          type=\"number\"\n          placeholder=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.PAYMENT.PURCHASE_AMOUNT.MIN, "\"\n          min=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.PAYMENT.PURCHASE_AMOUNT.MIN, "\"\n          max=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.PAYMENT.PURCHASE_AMOUNT.MAX, "\"\n          step=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.LOTTO.PRICE, "\"\n          autofocus\n        >\n        <button id=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.PAYMENT_SUBMIT, "\" class=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.SUBMIT_BUTTON, "\">\uAD6C\uC785</button>\n      </form>\n    ");
+      return "\n      <label\n        class=\"".concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.HINT, "\"\n        for=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.PAYMENT_INPUT, "\"\n      >\n        \uAD6C\uC785\uD560 \uAE08\uC561\uC744 \uC785\uB825\uD574\uC8FC\uC138\uC694.\n      </label>\n      <form id=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.PAYMENT_FORM, "\" class=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.INPUT_FORM, "\">\n        <input\n          id=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.PAYMENT_INPUT, "\"\n          class=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.STYLED_INPUT, "\"\n          type=\"number\"\n          placeholder=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.PAYMENT.PURCHASE_AMOUNT.MIN, "\"\n          autofocus\n        >\n        <button\n          id=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.PAYMENT_SUBMIT, "\"\n          class=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.SUBMIT_BUTTON, "\"\n          type=\"submit\"\n          form=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.PAYMENT_FORM, "\"\n        >\uAD6C\uC785</button>\n      </form>\n    ");
     }
   }, {
-    key: "bindOnClickPaymentSubmit",
-    value: function bindOnClickPaymentSubmit(callback) {
-      this.bindEventListener('click', {
-        attributeName: _configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.PAYMENT_SUBMIT,
-        attributeType: 'id'
-      }, this.handleOnClickpaymentSubmit.bind(this, callback));
-    }
-  }, {
-    key: "handleOnClickpaymentSubmit",
-    value: function handleOnClickpaymentSubmit(callback) {
-      var amount = (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_2__.$)(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.PAYMENT_INPUT, 'id').valueAsNumber;
+    key: "bindOnSubmitPaymentSubmit",
+    value: function bindOnSubmitPaymentSubmit(callback) {
+      var _this = this;
 
-      try {
-        (0,_utils_validator_js__WEBPACK_IMPORTED_MODULE_3__.validate)(amount, _utils_validator_js__WEBPACK_IMPORTED_MODULE_3__.purchaseAmountValidator);
-        callback(amount);
-      } catch (e) {
-        alert(e);
-      }
+      this.bindEventListener('submit', {
+        attributeName: _configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.PAYMENT_FORM,
+        attributeType: 'id'
+      }, function () {
+        try {
+          var purchaseAmount = _this.getPurchaseAmount();
+
+          (0,_utils_validator_js__WEBPACK_IMPORTED_MODULE_3__.validate)(purchaseAmount, _utils_validator_js__WEBPACK_IMPORTED_MODULE_3__.purchaseAmountValidator);
+          callback(purchaseAmount);
+        } catch (e) {
+          alert(e);
+        }
+      });
+    }
+  }, {
+    key: "getPurchaseAmount",
+    value: function getPurchaseAmount() {
+      return (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_2__.$)(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.PAYMENT_INPUT, 'id').valueAsNumber;
     }
   }]);
 
@@ -1159,16 +1178,16 @@ var ResultModalWindowView = /*#__PURE__*/function (_View) {
   }, {
     key: "bindOnClickModalOverlay",
     value: function bindOnClickModalOverlay(callback) {
+      var _this = this;
+
       this.bindEventListener('click', {
         attributeName: _configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.RESTART_BUTTON,
         attributeType: 'id'
-      }, this.handleOnClickModalOverlay.bind(this, callback));
-    }
-  }, {
-    key: "handleOnClickModalOverlay",
-    value: function handleOnClickModalOverlay(callback) {
-      this.closeModalWindow();
-      callback();
+      }, function () {
+        _this.closeModalWindow();
+
+        callback();
+      });
     }
   }, {
     key: "closeModalWindow",
@@ -1262,14 +1281,18 @@ var TicketSectionView = /*#__PURE__*/function (_View) {
   }, {
     key: "bindOnClickNumberToggle",
     value: function bindOnClickNumberToggle() {
+      var _this = this;
+
       this.bindEventListener('click', {
         attributeName: _configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.SLIDER,
         attributeType: 'id'
-      }, this.handleOnClickNumberToggle.bind(this));
+      }, function () {
+        _this.toggleIsShowNumber();
+      });
     }
   }, {
-    key: "handleOnClickNumberToggle",
-    value: function handleOnClickNumberToggle() {
+    key: "toggleIsShowNumber",
+    value: function toggleIsShowNumber() {
       var isShowNumber = this.state.isShowNumber;
       this.update({
         isShowNumber: !isShowNumber
@@ -1363,51 +1386,39 @@ var WinningNumberSectionView = /*#__PURE__*/function (_View) {
         length: _configs_contants_js__WEBPACK_IMPORTED_MODULE_3__.LOTTO.NUMBER_LENGTH
       }, function () {
         return "\n                  <input\n                    class=\"".concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_3__.DOM_STRING.STYLED_INPUT, " ").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_3__.DOM_STRING.WINNING_NUMBER_INPUT, " ").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_3__.DOM_STRING.MAIN_NUMBER_INPUT, "\"\n                    type=\"number\"\n                    min=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_3__.LOTTO.NUMBER_RANGE.MIN, "\"\n                    max=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_3__.LOTTO.NUMBER_RANGE.MAX, "\"\n                    step=\"1\"\n                  >\n                ");
-      }).join(''), "\n          </div>\n        </fieldset>\n        <fieldset id=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_3__.DOM_STRING.BONUS_NUMBER_FIELDSET, "\">\n          <label class=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_3__.DOM_STRING.HINT, "\">\uBCF4\uB108\uC2A4 \uBC88\uD638</label>\n          <input\n            class=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_3__.DOM_STRING.STYLED_INPUT, " ").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_3__.DOM_STRING.WINNING_NUMBER_INPUT, " ").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_3__.DOM_STRING.BONUS_NUMBER_INPUT, "\"\n            type=\"number\"\n            min=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_3__.LOTTO.NUMBER_RANGE.MIN, "\"\n            max=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_3__.LOTTO.NUMBER_RANGE.MAX, "\"\n            step=\"1\"\n          >\n        </fieldset>\n      </form>\n      <button\n        id=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_3__.DOM_STRING.SHOW_RESULT_BUTTON, "\"\n        class=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_3__.DOM_STRING.SUBMIT_BUTTON, "\"\n        ").concat(lottoList.length === 0 && 'disabled' || '', "\n      >\n        \uACB0\uACFC \uD655\uC778\uD558\uAE30\n      </button>\n    ");
+      }).join(''), "\n          </div>\n        </fieldset>\n        <fieldset id=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_3__.DOM_STRING.BONUS_NUMBER_FIELDSET, "\">\n          <label class=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_3__.DOM_STRING.HINT, "\">\uBCF4\uB108\uC2A4 \uBC88\uD638</label>\n          <input\n            class=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_3__.DOM_STRING.STYLED_INPUT, " ").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_3__.DOM_STRING.WINNING_NUMBER_INPUT, " ").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_3__.DOM_STRING.BONUS_NUMBER_INPUT, "\"\n            type=\"number\"\n            min=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_3__.LOTTO.NUMBER_RANGE.MIN, "\"\n            max=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_3__.LOTTO.NUMBER_RANGE.MAX, "\"\n            step=\"1\"\n          >\n        </fieldset>\n      </form>\n      <button\n        id=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_3__.DOM_STRING.SHOW_RESULT_BUTTON, "\"\n        class=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_3__.DOM_STRING.SUBMIT_BUTTON, "\"\n        ").concat(lottoList.length === 0 && 'disabled' || '', "\n        type=\"submit\"\n        form=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_3__.DOM_STRING.WINNING_NUMBER_FORM, "\"\n      >\n        \uACB0\uACFC \uD655\uC778\uD558\uAE30\n      </button>\n    ");
     }
   }, {
     key: "bindOnInputWinningNumberInput",
     value: function bindOnInputWinningNumberInput() {
-      this.bindEventListener('input', {
+      var attribute = {
         attributeName: _configs_contants_js__WEBPACK_IMPORTED_MODULE_3__.DOM_STRING.WINNING_NUMBER_INPUT,
         attributeType: 'class'
-      }, this.handleOnInputWinningNumberInput.bind(this));
+      };
+      this.bindEventListener('input', attribute, function (_ref) {
+        var target = _ref.target;
+        (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.forceIntegerValue)(target);
+        (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.focusNextSibling)(target, attribute, _configs_contants_js__WEBPACK_IMPORTED_MODULE_3__.LOTTO.NUMBER_RANGE.MAX);
+      });
     }
   }, {
-    key: "bindOnClickShowResultButton",
-    value: function bindOnClickShowResultButton(callback) {
-      this.bindEventListener('click', {
-        attributeName: _configs_contants_js__WEBPACK_IMPORTED_MODULE_3__.DOM_STRING.SHOW_RESULT_BUTTON,
+    key: "bindOnSubmitWinningNumberForm",
+    value: function bindOnSubmitWinningNumberForm(callback) {
+      var _this = this;
+
+      this.bindEventListener('submit', {
+        attributeName: _configs_contants_js__WEBPACK_IMPORTED_MODULE_3__.DOM_STRING.WINNING_NUMBER_FORM,
         attributeType: 'id'
-      }, this.handleOnClickShowResultButton.bind(this, callback));
-    }
-  }, {
-    key: "handleOnInputWinningNumberInput",
-    value: function handleOnInputWinningNumberInput(e) {
-      var target = e.target;
-      target.value = (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.removeNaN)(target.value);
-      target.value = (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.ignoreFirstZero)(target.value);
-      target.value = target.value.substr(0, 2);
+      }, function () {
+        try {
+          var winningNumbers = _this.getWinningNumbers();
 
-      if ((0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.isInputOutOfRange)(target, _configs_contants_js__WEBPACK_IMPORTED_MODULE_3__.LOTTO.NUMBER_RANGE.MAX)) {
-        var nextInput = (0,_utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.getNextSibling)(target, {
-          attributeName: _configs_contants_js__WEBPACK_IMPORTED_MODULE_3__.DOM_STRING.WINNING_NUMBER_INPUT,
-          attributeType: 'class'
-        });
-        if (nextInput) nextInput.focus();
-      }
-    }
-  }, {
-    key: "handleOnClickShowResultButton",
-    value: function handleOnClickShowResultButton(callback) {
-      var winningNumbers = this.getWinningNumbers();
-
-      try {
-        (0,_utils_validator_js__WEBPACK_IMPORTED_MODULE_2__.validate)(winningNumbers, _utils_validator_js__WEBPACK_IMPORTED_MODULE_2__.winningNumbersValidator, _utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.concatWinningNumbers);
-        callback(winningNumbers);
-      } catch (e) {
-        alert(e);
-      }
+          (0,_utils_validator_js__WEBPACK_IMPORTED_MODULE_2__.validate)(winningNumbers, _utils_validator_js__WEBPACK_IMPORTED_MODULE_2__.winningNumbersValidator, _utils_utils_js__WEBPACK_IMPORTED_MODULE_1__.concatWinningNumbers);
+          callback(winningNumbers);
+        } catch (e) {
+          alert(e);
+        }
+      });
     }
   }, {
     key: "getWinningNumbers",
