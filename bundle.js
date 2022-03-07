@@ -316,10 +316,15 @@ var AppController = /*#__PURE__*/function (_Controller) {
   }, {
     key: "purchase",
     value: function purchase(amount) {
-      this.models.lottoModel.init();
+      this.clearLottoList();
       var message = this.autoPickLotto(_models_LottoModel_js__WEBPACK_IMPORTED_MODULE_1__["default"].getLottoCount(amount));
       this.views.ticketSectionView.update(message);
       this.views.winningNumberSectionView.update(message);
+    }
+  }, {
+    key: "clearLottoList",
+    value: function clearLottoList() {
+      this.models.lottoModel.init();
     }
   }, {
     key: "countMatchedTickets",
@@ -1054,7 +1059,7 @@ var PaymentSectionView = /*#__PURE__*/function (_View) {
   _createClass(PaymentSectionView, [{
     key: "template",
     value: function template() {
-      return "\n      <label\n        class=\"".concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.HINT, "\"\n        for=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.PAYMENT_INPUT, "\"\n      >\n        \uAD6C\uC785\uD560 \uAE08\uC561\uC744 \uC785\uB825\uD574\uC8FC\uC138\uC694.\n      </label>\n      <form id=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.PAYMENT_FORM, "\" class=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.INPUT_FORM, "\">\n        <input\n          id=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.PAYMENT_INPUT, "\"\n          class=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.STYLED_INPUT, "\"\n          type=\"number\"\n          placeholder=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.PAYMENT.PURCHASE_AMOUNT.MIN, "\"\n          autofocus\n        >\n        <button\n          id=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.PAYMENT_SUBMIT, "\"\n          class=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.SUBMIT_BUTTON, "\"\n          type=\"submit\"\n          form=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.PAYMENT_FORM, "\"\n        >\uAD6C\uC785</button>\n      </form>\n    ");
+      return "\n      <label\n        class=\"".concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.HINT, "\"\n        for=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.PAYMENT_INPUT, "\"\n      >\n        \uAD6C\uC785\uD560 \uAE08\uC561\uC744 \uC785\uB825\uD574\uC8FC\uC138\uC694.\n      </label>\n      <form id=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.PAYMENT_FORM, "\" class=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.INPUT_FORM, "\">\n        <input\n          id=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.PAYMENT_INPUT, "\"\n          class=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.STYLED_INPUT, "\"\n          type=\"number\"\n          placeholder=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.PAYMENT.PURCHASE_AMOUNT.MIN, "\"\n          min=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.PAYMENT.PURCHASE_AMOUNT.MIN, "\"\n          max=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.PAYMENT.PURCHASE_AMOUNT.MAX, "\"\n          step=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.LOTTO.PRICE, "\"\n          autofocus\n        >\n        <button\n          id=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.PAYMENT_SUBMIT, "\"\n          class=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.SUBMIT_BUTTON, "\"\n          type=\"submit\"\n          form=\"").concat(_configs_contants_js__WEBPACK_IMPORTED_MODULE_1__.DOM_STRING.PAYMENT_FORM, "\"\n        >\uAD6C\uC785</button>\n      </form>\n    ");
     }
   }, {
     key: "bindOnSubmitPaymentSubmit",
